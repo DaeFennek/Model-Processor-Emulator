@@ -1,0 +1,13 @@
+LDA 4
+STA (14)
+LDA 2
+STA (13)
+LDA 0
+STA (15)
+LDA (13)
+BRZ 6
+SUB 1
+STA (13)
+LDA (15)
+ADD (14)
+JMP 5
