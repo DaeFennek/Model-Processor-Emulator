@@ -89,9 +89,6 @@ void processor::CPU::Execute(char instruction, char data)
 
 void processor::CPU::Fetch()
 {
-	if (m_progamCounterRegister == 16)
-		m_progamCounterRegister = 0;
-
 	m_instructionRegister = m_codeRam.DataAt(m_progamCounterRegister);
 	m_dataRegister = m_dataRam.DataAt(m_progamCounterRegister);
 }
@@ -103,8 +100,12 @@ void processor::CPU::Run(char code[], char data[])
 	m_dataRam.Load(data);	
 
 	using namespace std::chrono_literals;
-	while (true)
+	while (m_progamCounterRegister < 16)
 	{
+		Fetch();
+		Execute(m_instructionRegister, m_dataRegister);
+		std::this_thread::sleep_for(1s);
+
 		std::cout << "Accumulator Value: " << (int)m_accu.Value() << std::endl
 			<< "Carry: " << (int)m_carryRegister << std::endl
 			<< "Zero: " << (int)m_zeroRegister << std::endl
@@ -113,9 +114,8 @@ void processor::CPU::Run(char code[], char data[])
 			<< "Instruction: " << (int)m_instructionRegister << std::endl
 			<< "Data: " << (int)m_dataRegister << std::endl
 			<< "+++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-
-		Fetch();
-		Execute(m_instructionRegister, m_dataRegister);
-		std::this_thread::sleep_for(1s);
 	}		
+
+	std::cout << "Data Memory: ";
+	m_dataRam.Dump();
 }
